@@ -3,7 +3,6 @@
 """
 Created on Fri Apr 10 10:49:21 2026
 
-@author: franciscasilva
 """
 
 from classes.gclass import Gclass
