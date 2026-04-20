@@ -19,14 +19,21 @@ class Worker(Gclass):
 
     def __init__(self, id, extra_info, farmer_id):
         super().__init__()
-        id = Worker.get_id(id)
-        self._id = id
-        self._extra_info = extra_info
-        self._farmer_id = int(farmer_id)
-        
-        Worker.obj[id] = self
-        Worker.lst.append(id)
 
+        if id is None or str(id) == 'None':
+            self._id = 0 
+        else:
+            self._id = int(float(id))
+            
+        self._extra_info = extra_info
+
+        if farmer_id is None or str(farmer_id) == 'None':
+            self._farmer_id = 0
+        else:
+            self._farmer_id = int(float(farmer_id))
+        
+        Worker.obj[self._id] = self
+        Worker.lst.append(self._id)
     @property
     def id(self): return self._id
     @id.setter

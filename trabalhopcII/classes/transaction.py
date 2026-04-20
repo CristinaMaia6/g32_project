@@ -9,31 +9,34 @@ Created on Fri Apr 10 10:49:36 2026
 from classes.gclass import Gclass
 import datetime
 
-class Transaction(Gclass):
+class Transactions(Gclass):
     obj = dict()
     lst = list()
     pos = 0
     sortkey = ''
-    att = ['_id', '_transaction_date', '_amount', '_farmer_id', '_market_id']
+    att = ['_id', '_farmer_id', '_market_id', '_transaction_date', '_amount']
     header = 'Transactions'
-    des = ['Id', 'Date', 'Amount', 'Farmer Id', 'Market Id']
+    des = ['Id', 'Farmer Id', 'Market Id', 'Date', 'Amount']
 
-    def __init__(self, id, transaction_date, amount, farmer_id, market_id):
+    def __init__(self, id, farmer_id, market_id, transaction_date, amount):
         super().__init__()
-        id = Transaction.get_id(id)
-        self._id = id
         
-        if isinstance(transaction_date, str):
-            self._transaction_date = datetime.date.fromisoformat(transaction_date)
+        self._id = int(float(id)) if id and str(id) != 'None' else 0
+        self._farmer_id = int(float(farmer_id)) if farmer_id and str(farmer_id) != 'None' else 0
+        self._market_id = int(float(market_id)) if market_id and str(market_id) != 'None' else 0
+        
+        if isinstance(transaction_date, str) and transaction_date != 'None':
+            try:
+                self._transaction_date = datetime.date.fromisoformat(transaction_date)
+            except ValueError:
+                self._transaction_date = transaction_date
         else:
             self._transaction_date = transaction_date
             
-        self._amount = float(amount)
-        self._farmer_id = int(farmer_id)
-        self._market_id = int(market_id)
+        self._amount = float(amount) if amount and str(amount) != 'None' else 0.0
         
-        Transaction.obj[id] = self
-        Transaction.lst.append(id)
+        Transactions.obj[self._id] = self
+        Transactions.lst.append(self._id)
 
     @property
     def id(self): return self._id
