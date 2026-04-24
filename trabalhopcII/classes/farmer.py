@@ -3,7 +3,7 @@
 """
 Created on Fri Apr 10 10:48:18 2026
 
-@author: franciscasilva
+
 """
 
 from classes.gclass import Gclass
@@ -44,4 +44,4 @@ class Farmer(Gclass):
     @property
     def creation_date(self): return self._creation_date
     @creation_date.setter
-    def creation_date(self, value): self._creation_date = value
+    def creation_date(self, value): self._creation_date = value 
