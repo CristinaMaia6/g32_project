@@ -4,7 +4,7 @@ Created on Mon Apr 20 01:43:33 2026
 
 @author: crism
 """
-
+ 
 from classes.gclass import Gclass
 
 class MarketType(Gclass):
