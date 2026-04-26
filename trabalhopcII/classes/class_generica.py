@@ -11,7 +11,7 @@ from classes.market_type import MarketType
 from classes.worker import Worker
 from classes.transaction import Transactions
 from datafile import filename
-import datetime
+
 
 # 1. Configuração inicial
 db_path = filename + 'trabalhopc_project.db'
@@ -30,8 +30,8 @@ for cls in classes_disponiveis.values():
 def mostrar_registos(cls):
     print(f"\n--- {cls.header.upper()} ---")
     
-    # 1. Criar a legenda das colunas usando a lista 'des' da classe
-    # Isto vai imprimir algo como: "Estrutura: Id | Name | Creation Date"
+    # 1. Criar a legenda das colunas atraves da lista 'des' da classe
+    # "Estrutura: Id | Name | Creation Date"
     guia = " | ".join(cls.des)
     print(f"{guia}")
 
@@ -45,57 +45,76 @@ def mostrar_registos(cls):
     # 3. Listar os dados reais
     for idx in cls.lst:
         obj = cls.obj[idx]
-        # Vamos buscar os valores usando a lista 'att' (_id, _name, etc)
+        # Vamos buscar os valores atraves da lista 'att' (_id, _name, etc)
         valores = [str(getattr(obj, attr)) for attr in cls.att]
         print(" | ".join(valores))
 
 
 def adicionar_registo(cls):
     print(f"\n--- Adicionar {cls.header} ---")
-    obj = None  # Inicializamos a None para evitar o erro de 'UnboundLocalError'
+    obj = None 
+    id_a_gravar = None  # <--- Nova variável para evitar o erro de atributo
 
     # Se for um farmer
     if cls == Farmer:
-        id = Farmer.get_id(0)
+        id_a_gravar = Farmer.get_id(0)
         nome = input("Nome: ")
         data = input("Data de Criação (AAAA-MM-DD): ")
-        obj = Farmer(id, nome, data)
+        obj = Farmer(id_a_gravar, nome, data)
 
     # Se for um market
     elif cls == Market:
-        id = Market.get_id(0)
+        id_a_gravar = Market.get_id(0)
         titulo = input("Título do Mercado: ")
         categoria = input("Categoria: ")
-        obj = Market(id, titulo, categoria)
+        obj = Market(id_a_gravar, titulo, categoria)
 
     # Se for uma transaction
     elif cls == Transactions:
-        id = Transactions.get_id(0)
+        id_a_gravar = Transactions.get_id(0)
         f_id = input("ID do Agricultor: ")
         m_id = input("ID do Mercado: ")
         data = input("Data da Venda (AAAA-MM-DD): ")
         valor = input("Valor da Venda: ")
-        # Criar o objeto com a ordem correta que definimos na classe
-        obj = Transactions(id, f_id, m_id, data, valor)
+        obj = Transactions(id_a_gravar, f_id, m_id, data, valor)
 
     # Se for um worker
     elif cls == Worker:
-        id = Worker.get_id(0)
+        id_a_gravar = Worker.get_id(0)
         info = input("Informação Extra: ")
         f_id = input("ID do Agricultor responsável: ")
-        obj = Worker(id, info, f_id)
+        obj = Worker(id_a_gravar, info, f_id)
 
+    # Se for um tipo de mercado
+    elif cls == MarketType:
+        tipo = input("Que tipo de mercado? (Flores/Fruta/Roupa): ")
+        # Aqui o ID é o que o utilizador digita
+        id_a_gravar = int(input("A que ID de Market quer atribuir este tipo? "))
+        obj = MarketType(id_a_gravar, "Mercado de " + tipo)
+
+    # --- PARTE FINAL CORRIGIDA ---
     if obj is not None:
-        cls.insert(obj.id)
-        print(f"{cls.__name__} {obj.id} guardado com sucesso na base de dados!")
+        # 1. Só adicionamos à lista 'lst' se o ID ainda não existir lá
+        if id_a_gravar not in cls.lst:
+            cls.lst.append(id_a_gravar)
+        
+        # 2. Atualizamos o dicionário de objetos (isto substitui o antigo pelo novo)
+        cls.obj[id_a_gravar] = obj
+        
+        # 3. Gravamos na base de dados
+        cls.insert(id_a_gravar)
+        print(f"\n[Sucesso] {cls.__name__} {id_a_gravar} atualizado/guardado!")
     else:
-        print(f"Erro: Ainda não definiste como ler os dados para a classe {cls.__name__}.")
+        print(f"Erro: Classe {cls.__name__} não reconhecida.")    
+
 
 def remover_registo(cls):
     id_apagar = int(input(f"Qual o ID de {cls.__name__} a remover? "))
+    
     if id_apagar in cls.lst:
-        cls.remove(id_apagar)
+        cls.remove(id_apagar)         
         print("Removido com sucesso!")
+        
     else:
         print("ID não encontrado.")
 
