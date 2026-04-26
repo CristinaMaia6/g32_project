@@ -13,7 +13,6 @@ from classes.transaction import Transactions
 from datafile import filename
 
 
-# 1. Configuração inicial
 db_path = filename + 'trabalhopc_project.db'
 classes_disponiveis = {
     'f': Farmer,
@@ -31,7 +30,7 @@ def mostrar_registos(cls):
     print(f"\n--- {cls.header.upper()} ---")
     
     # 1. Criar a legenda das colunas atraves da lista 'des' da classe
-    # "Estrutura: Id | Name | Creation Date"
+    # Exemplo: "Estrutura: Id | Name | Creation Date"
     guia = " | ".join(cls.des)
     print(f"{guia}")
 
@@ -42,10 +41,10 @@ def mostrar_registos(cls):
         print("Ainda não existem registos nesta tabela.")
         return
 
-    # 3. Listar os dados reais
+    # 3. Listar os dados
     for idx in cls.lst:
         obj = cls.obj[idx]
-        # Vamos buscar os valores atraves da lista 'att' (_id, _name, etc)
+        # Mostrar os valores atraves da lista 'att' (_id, _name, etc)
         valores = [str(getattr(obj, attr)) for attr in cls.att]
         print(" | ".join(valores))
 
@@ -53,7 +52,7 @@ def mostrar_registos(cls):
 def adicionar_registo(cls):
     print(f"\n--- Adicionar {cls.header} ---")
     obj = None 
-    id_a_gravar = None  # <--- Nova variável para evitar o erro de atributo
+    id_a_gravar = None
 
     # Se for um farmer
     if cls == Farmer:
@@ -88,20 +87,19 @@ def adicionar_registo(cls):
     # Se for um tipo de mercado
     elif cls == MarketType:
         tipo = input("Que tipo de mercado? (Flores/Fruta/Roupa): ")
-        # Aqui o ID é o que o utilizador digita
         id_a_gravar = int(input("A que ID de Market quer atribuir este tipo? "))
         obj = MarketType(id_a_gravar, "Mercado de " + tipo)
 
-    # --- PARTE FINAL CORRIGIDA ---
+
     if obj is not None:
-        # 1. Só adicionamos à lista 'lst' se o ID ainda não existir lá
+        # 1. Só adiciona à lista 'lst' se o ID ainda não existir lá
         if id_a_gravar not in cls.lst:
             cls.lst.append(id_a_gravar)
         
-        # 2. Atualizamos o dicionário de objetos (isto substitui o antigo pelo novo)
+        # 2. Atualiza o dicionário de objetos (isto substitui o antigo pelo novo)
         cls.obj[id_a_gravar] = obj
         
-        # 3. Gravamos na base de dados
+        # 3. Grava na base de dados
         cls.insert(id_a_gravar)
         print(f"\n[Sucesso] {cls.__name__} {id_a_gravar} atualizado/guardado!")
     else:
