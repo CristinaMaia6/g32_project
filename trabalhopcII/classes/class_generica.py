@@ -9,12 +9,13 @@ import sys
 import os
 import datetime
 
-# Imports das tuas classes (ajustados para a estrutura de pastas)
+# Imports das classes
 from classes.farmer import Farmer
 from classes.market_type import MarketType
 from classes.market import Market
 from classes.transaction import Transactions
 from classes.worker import Worker
+from datafile import filename
 
 def menu_principal():
     print('\nSISTEMA DE GESTÃO AGRÍCOLA')
@@ -29,7 +30,7 @@ def menu_principal():
     return input('Escolha uma classe: ')
 
 def run_app():
-    db_path = '../data/trabalhopc_project.db'
+    db_path = filename + 'trabalhopc_project.db'
     
     while True:
         escolha = menu_principal()
@@ -37,7 +38,7 @@ def run_app():
         if escolha == 'q':
             break
             
-        # Define qual a test_class e o objeto de exemplo 'ob' para o auto-incremento inicial
+     
         if escolha == '1':
             test_class = Farmer
             ob = '0;Nome;2026-01-01'
@@ -57,7 +58,7 @@ def run_app():
             print("Opção inválida!")
             continue
 
-        # Carrega os dados
+        # Reads the db file
         test_class.read(db_path)
 
         op = ''
@@ -98,7 +99,6 @@ def run_app():
                 
             elif op == 'i':
                 p1 = None
-                # Se a lista estiver vazia, cria um objeto temporário para ler os atributos
                 if len(test_class.lst) == 0:
                     p = eval('test_class.from_string("' + ob + '")')
                     p1 = p
@@ -174,6 +174,7 @@ def run_app():
                     print(test_class.obj[code])
 
             elif op == 's':
+                # Sort products by attribute in ascending order
                 attrib = input('Sort by attribute name (without _): ')
                 if '_' + attrib in list(p.__dict__.keys()):
                     rev = input('Reverse (y/n)? ').lower() == 'y'
@@ -184,6 +185,7 @@ def run_app():
                     if codep: test_class.current(codep)
 
             elif op == 'f':
+                # Find objects with a given value in an attribute
                 attrib = input('Attribute name (without _): ')
                 if '_' + attrib in list(p.__dict__.keys()):
                     atype = type(getattr(p, '_' + attrib))
