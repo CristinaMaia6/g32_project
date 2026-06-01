@@ -21,6 +21,7 @@ from subs.apps_userlogin import apps_userlogin
 
 app = Flask(__name__)
 app.secret_key = 'BAD_SECRET_KEY'
+app.jinja_env.globals.update(getattr=getattr)
 
 Farmer.read(filename + 'trabalhopc_project.db')
 Worker.read(filename + 'trabalhopc_project.db')
