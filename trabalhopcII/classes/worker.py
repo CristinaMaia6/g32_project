@@ -12,17 +12,17 @@ class Worker(Gclass):
     lst = list()
     pos = 0
     sortkey = ''
-    att = ['_id', '_extra_info', '_farmer_id']
+    att = ['_worker_id', '_extra_info', '_farmer_id']
     header = 'Workers'
     des = ['Id', 'Extra Info', 'Farmer Id']
 
-    def __init__(self, id, extra_info, farmer_id):
+    def __init__(self, worker_id, extra_info, farmer_id):
         super().__init__()
 
-        if id is None or str(id) == 'None':
-            self._id = 0 
+        if worker_id is None or str(worker_id) == 'None':
+            self._worker_id = 0 
         else:
-            self._id = int(float(id))
+            self._worker_id = int(float(worker_id))
             
         self._extra_info = extra_info
 
@@ -31,12 +31,13 @@ class Worker(Gclass):
         else:
             self._farmer_id = int(float(farmer_id))
         
-        Worker.obj[self._id] = self
-        Worker.lst.append(self._id)
+        Worker.obj[self._worker_id] = self
+        Worker.lst.append(self._worker_id)
+
     @property
-    def id(self): return self._id
-    @id.setter
-    def id(self, value): self._id = value
+    def worker_id(self): return self._worker_id
+    @worker_id.setter
+    def worker_id(self, value): self._worker_id = value
 
     @property
     def extra_info(self): return self._extra_info

@@ -1,0 +1,443 @@
+/* ==========================================================================
+   1. RESET TOTAL
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; 
+}
+
+/* ==========================================================================
+   2. HERO SECTION (PÁGINA INICIAL)
+   ========================================================================== */
+.hero-index {
+    /* Substitui este link pelo caminho ou URL da tua imagem */
+    background-image: url('https://static.vecteezy.com/ti/fotos-gratis/p2/69892118-trator-trabalhando-dentro-campo-as-por-do-sol-agricultura-agricultura-colheita-rural-paisagem-e-sustentavel-praticas-gratis-foto.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    color: white;
+    text-align: center;
+    background-color: transparent !important; /* Garante que não fica verde */
+}
+
+.hero-index::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* O valor 0.5 define a transparência do filtro escuro sobre a imagem */
+    /* Diminui para 0.3 se quiseres a imagem mais clara */
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 0;
+}
+
+.hero-index h1, .hero-index p {
+    position: relative;
+    z-index: 1;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+}
+
+.hero-index h1 {
+    letter-spacing: 5px;
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+}
+
+.hero-index p {
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+}
+
+/* ==========================================================================
+   3. NAVEGAÇÃO E BOTÃO DE LOGIN
+   ========================================================================== */
+nav {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 9999;
+    padding: 30px 40px;
+}
+
+.menu {
+    list-style: none;
+}
+
+.login-btn-original {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    display: inline-block;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.login-btn-original:hover {
+    background-color: #2e7d32 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+
+/* ==========================================================================
+   4. LÓGICA DE OCULTAÇÃO POR PÁGINA
+   ========================================================================== */
+body.login nav,
+.login-wrapper ~ nav,
+.login-wrapper nav,
+.login-card ~ nav {
+    display: none !important;
+}
+
+body.has-hero nav .menu li:not(:has(.login-btn-original)) {
+    display: none;
+}
+
+/* ==========================================================================
+   5. ESTILOS DA PÁGINA DE LOGIN
+   ========================================================================== */
+.login-wrapper {
+    height: 100vh;
+    width: 100vw;
+    background-color: #1a3c1a !important;
+    background-image: none !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.login-card {
+    background-color: #e0e0e0 !important;
+    opacity: 1 !important;
+    padding: 40px;
+    border-radius: 4px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.login-card h1 {
+    color: #1a3c1a !important;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 25px;
+    font-weight: 400;
+}
+
+.login-wrapper .dados {
+    background: none !important;
+    background-image: none !important;
+    color: #1a3c1a !important;
+    padding: 0 !important;
+    min-height: auto !important;
+    width: 100% !important;
+}
+
+.login-wrapper .dados label {
+    color: #1a3c1a !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.login-wrapper .dados input {
+    width: 100%;
+    padding: 11px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #b0b0b0;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 1rem;
+}
+
+.login-wrapper .button1 {
+    width: 100% !important;
+    padding: 12px !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 4px !important;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.3s;
+    margin: 10px 0 0 0 !important;
+}
+
+.login-wrapper .button1:hover {
+    background-color: #2e7d32 !important;
+}
+
+/* ==========================================================================
+   6. PAINEL DE GESTÃO PÓS-LOGIN
+   ========================================================================== */
+.dashboard-wrapper {
+    height: 100vh;
+    width: 100vw;
+    background-color: #3b5c3b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.dashboard-content {
+    text-align: center;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.dashboard-title {
+    color: #ffffff;
+    font-size: 3rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    margin-bottom: 20px;
+}
+
+.dashboard-subtitle {
+    color: #cbdcbd;
+    font-size: 1.15rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   7. ESTILIZAÇÃO E ALINHAMENTO DO MENU SUPERIOR
+   ========================================================================== */
+body:not(.login) nav .menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    list-style: none;
+}
+
+body:not(.login) nav .menu .button {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    padding: 10px 18px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    color: #ffffff !important;
+    transition: all 0.25s ease-in-out;
+}
+
+body:not(.login) nav .menu .button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+body:not(.login) nav .menu li a[href="/logoff"] {
+    background-color: #2e7d32 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+body:not(.login) nav .menu li a[href="/logoff"]:hover {
+    background-color: #000000 !important;
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   8. ESTILIZAÇÃO DAS PÁGINAS DE CLASSE (FARMERS, MARKETS, ETC.)
+   ========================================================================== */
+body, .page-body {
+    background-color: #3b5c3b !important;
+}
+
+body:not(.hero-index), 
+.page-body:not(.hero-index) {
+    background-color: #3b5c3b !important;
+}
+
+.dados {
+    background-color: #3b5c3b !important; 
+    background-image: none !important;
+    min-height: 100vh;
+    width: 100vw;
+    padding: 140px 20px 40px 20px !important;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto;
+}
+
+.dados img {
+    display: none !important;
+}
+
+.dados h1 {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    color: #ffffff !important;
+    margin-bottom: 25px;
+    text-align: center;
+    width: 100%;
+}
+
+.dados form {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-sizing: border-box;
+}
+
+.dados form p, 
+.dados form div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.dados form label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    color: #cbdcbd !important;
+    margin-bottom: 6px;
+    display: inline-block;
+}
+
+.dados form input[type="text"], 
+.dados form input[type="password"],
+.dados form input[type="number"],
+.dados form input:not([type="submit"]):not([type="button"]) {
+    width: 100% !important;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding: 12px 14px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 6px !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    color: #1a3c1a !important;
+    font-size: 1rem;
+    box-sizing: border-box !important;
+    margin-bottom: 10px;
+}
+
+.dados form input[readonly],
+.dados form input[disabled] {
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+   9. BOTÕES E EFEITOS HOVER
+   ========================================================================== */
+.dados .button1,
+.dados button {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    padding: 5px 12px !important;
+    margin: 10px 18px !important; 
+    display: inline-block !important;
+    vertical-align: middle !important;
+    float: none !important;
+    cursor: pointer;
+
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    text-transform: uppercase !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 2px !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    transition: color 0.2s ease-in-out !important;
+}
+
+.dados > br {
+    display: none !important;
+}
+
+.dados form br {
+    display: inline-block !important;
+}
+.dados form input {
+    -webkit-appearance: auto !important;
+    appearance: auto !important;
+}
+
+.dados button:hover,
+.dados .button1:hover {
+    color: #cbdcbd !important;
+    background: transparent !important;
+}
+
+.dados button#save:hover,
+.dados .button1#save:hover {
+    color: #2e7d32 !important;
+    background: transparent !important;
+}
+
+.dados button#delete:hover,
+.dados .button1#delete:hover {
+    color: #c62828 !important;
+    background: transparent !important;
+}

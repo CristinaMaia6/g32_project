@@ -1,3 +1,5 @@
+
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -14,16 +16,16 @@ class Transactions(Gclass):
     lst = list()
     pos = 0
     sortkey = ''
-    att = ['_id', '_farmer_id', '_market_id', '_transaction_date', '_amount']
+    att = ['_id_transaction', '_id_farmer', '_id_market', '_transaction_date', '_amount']
     header = 'Transactions'
     des = ['Id', 'Farmer Id', 'Market Id', 'Date', 'Amount']
 
-    def __init__(self, id, farmer_id, market_id, transaction_date, amount):
+    def __init__(self, id_transaction, id_farmer, id_market, transaction_date, amount):
         super().__init__()
         
-        self._id = int(float(id)) if id and str(id) != 'None' else 0
-        self._farmer_id = int(float(farmer_id)) if farmer_id and str(farmer_id) != 'None' else 0
-        self._market_id = int(float(market_id)) if market_id and str(market_id) != 'None' else 0
+        self._id_transaction = int(float(id_transaction)) if id_transaction and str(id_transaction) != 'None' else 0
+        self._id_farmer = int(float(id_farmer)) if id_farmer and str(id_farmer) != 'None' else 0
+        self._id_market = int(float(id_market)) if id_market and str(id_market) != 'None' else 0
         
         if isinstance(transaction_date, str) and transaction_date != 'None':
             try:
@@ -35,13 +37,13 @@ class Transactions(Gclass):
             
         self._amount = float(amount) if amount and str(amount) != 'None' else 0.0
         
-        Transactions.obj[self._id] = self
-        Transactions.lst.append(self._id)
+        Transactions.obj[self._id_transaction] = self
+        Transactions.lst.append(self._id_transaction)
 
     @property
-    def id(self): return self._id
-    @id.setter
-    def id(self, value): self._id = value
+    def id_transaction(self): return self._id_transaction
+    @id_transaction.setter
+    def id_transaction(self, value): self._id_transaction = value
 
     @property
     def transaction_date(self): return self._transaction_date
@@ -54,11 +56,11 @@ class Transactions(Gclass):
     def amount(self, value): self._amount = value
 
     @property
-    def farmer_id(self): return self._farmer_id
-    @farmer_id.setter
-    def farmer_id(self, value): self._farmer_id = value
+    def id_farmer(self): return self._id_farmer
+    @id_farmer.setter
+    def id_farmer(self, value): self._id_farmer = value
 
     @property
-    def market_id(self): return self._market_id
-    @market_id.setter
-    def market_id(self, value): self._market_id = value
+    def id_market(self): return self._id_market
+    @id_market.setter
+    def id_market(self, value): self._id_market = value

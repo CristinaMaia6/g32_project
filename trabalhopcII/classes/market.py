@@ -14,24 +14,24 @@ class Market(Gclass):
     lst = list()
     pos = 0
     sortkey = ''
-    att = ['_id', '_title', '_category']
+    att = ['_market_id', '_title', '_category']
     header = 'Markets'
     des = ['Id', 'Title', 'Category']
 
-    def __init__(self, id, title, category):
+    def __init__(self, market_id, title, category):
         super().__init__()
-        id = Market.get_id(id)
-        self._id = id
+        market_id = Market.get_id(market_id)
+        self._market_id = market_id
         self._title = title
         self._category = category
         
-        Market.obj[id] = self
-        Market.lst.append(id)
+        Market.obj[market_id] = self
+        Market.lst.append(market_id)
 
     @property
-    def id(self): return self._id
-    @id.setter
-    def id(self, value): self._id = value
+    def market_id(self): return self._market_id
+    @market_id.setter
+    def market_id(self, value): self._market_id = value
 
     @property
     def title(self): return self._title

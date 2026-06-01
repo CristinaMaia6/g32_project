@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestão de Dados</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block title %}
+    {% endblock %}
+  </head>
+
+  <body class="page-body"> 
+        
+        <nav>
+            <ul class="menu">
+                {% if ulogin == None %}
+                    <li><a class="button login-btn-original" href="/login">Login</a></li>
+                {% else %}
+                    <li><a class="button" href="/logoff">Logoff</a></li>
+                    <li><a class="button" href="/gform/Farmer">Farmers</a></li>
+                    <li><a class="button" href="/gform/MarketType">Market Types</a></li>
+                    <li><a class="button" href="/gform/Market">Markets</a></li>
+                    <li><a class="button" href="/gform/Transactions">Transactions</a></li>
+                    <li><a class="button" href="/gform/Worker">Workers</a></li>
+                    <li><a class="button" href="/Userlogin">Users</a></li>
+                    <li><a class="button" style="color:lightblue">User: {{ulogin}}</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+    {% block content %}
+    {% endblock %}
+  </body>
+</html>
