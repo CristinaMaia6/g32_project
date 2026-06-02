@@ -1,6 +1,3 @@
-/* ==========================================================================
-   1. RESET TOTAL
-   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
@@ -13,11 +10,9 @@ html, body {
     overflow: auto; 
 }
 
-/* ==========================================================================
-   2. HERO SECTION (PÁGINA INICIAL)
-   ========================================================================== */
+
 .hero-index {
-    /* Substitui este link pelo caminho ou URL da tua imagem */
+
     background-image: url('https://static.vecteezy.com/ti/fotos-gratis/p2/69892118-trator-trabalhando-dentro-campo-as-por-do-sol-agricultura-agricultura-colheita-rural-paisagem-e-sustentavel-praticas-gratis-foto.jpg');
     background-size: cover;
     background-position: center;
@@ -31,7 +26,7 @@ html, body {
     position: relative;
     color: white;
     text-align: center;
-    background-color: transparent !important; /* Garante que não fica verde */
+    background-color: transparent !important; 
 }
 
 .hero-index::before {
@@ -41,8 +36,6 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    /* O valor 0.5 define a transparência do filtro escuro sobre a imagem */
-    /* Diminui para 0.3 se quiseres a imagem mais clara */
     background-color: rgba(0, 0, 0, 0.5); 
     z-index: 0;
 }
@@ -66,9 +59,6 @@ html, body {
     font-size: 1.2rem;
 }
 
-/* ==========================================================================
-   3. NAVEGAÇÃO E BOTÃO DE LOGIN
-   ========================================================================== */
 nav {
     position: absolute;
     top: 0;
@@ -100,9 +90,6 @@ nav {
     box-shadow: 0 4px 8px rgba(0,0,0,0.5);
 }
 
-/* ==========================================================================
-   4. LÓGICA DE OCULTAÇÃO POR PÁGINA
-   ========================================================================== */
 body.login nav,
 .login-wrapper ~ nav,
 .login-wrapper nav,
@@ -114,9 +101,6 @@ body.has-hero nav .menu li:not(:has(.login-btn-original)) {
     display: none;
 }
 
-/* ==========================================================================
-   5. ESTILOS DA PÁGINA DE LOGIN
-   ========================================================================== */
 .login-wrapper {
     height: 100vh;
     width: 100vw;
@@ -202,9 +186,6 @@ body.has-hero nav .menu li:not(:has(.login-btn-original)) {
     background-color: #2e7d32 !important;
 }
 
-/* ==========================================================================
-   6. PAINEL DE GESTÃO PÓS-LOGIN
-   ========================================================================== */
 .dashboard-wrapper {
     height: 100vh;
     width: 100vw;
@@ -239,9 +220,6 @@ body.has-hero nav .menu li:not(:has(.login-btn-original)) {
     letter-spacing: 1px;
 }
 
-/* ==========================================================================
-   7. ESTILIZAÇÃO E ALINHAMENTO DO MENU SUPERIOR
-   ========================================================================== */
 body:not(.login) nav .menu {
     display: flex;
     flex-direction: row;
@@ -279,9 +257,6 @@ body:not(.login) nav .menu li a[href="/logoff"]:hover {
     transform: translateY(-1px);
 }
 
-/* ==========================================================================
-   8. ESTILIZAÇÃO DAS PÁGINAS DE CLASSE (FARMERS, MARKETS, ETC.)
-   ========================================================================== */
 body, .page-body {
     background-color: #3b5c3b !important;
 }
@@ -378,9 +353,6 @@ body:not(.hero-index),
     cursor: not-allowed;
 }
 
-/* ==========================================================================
-   9. BOTÕES E EFEITOS HOVER
-   ========================================================================== */
 .dados .button1,
 .dados button {
     -webkit-appearance: none !important;
@@ -439,4 +411,85 @@ body:not(.hero-index),
 .dados .button1#delete:hover {
     color: #c62828 !important;
     background: transparent !important;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: rgba(26, 60, 26, 0.95); 
+    min-width: 220px;
+    box-shadow: 0px 8px 24px rgba(0,0,0,0.4);
+    border-radius: 4px;
+    z-index: 10000;
+    margin-top: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-content a {
+    color: #ffffff !important;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #2e7d32 !important;
+    border-radius: 4px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.modal-chart {
+    display: none; 
+    position: fixed; 
+    z-index: 10001; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7); 
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-chart-content {
+    background-color: #1a3c1a; 
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 650px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.close-modal {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    color: #cbdcbd;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-modal:hover {
+    color: #ffffff;
 }
