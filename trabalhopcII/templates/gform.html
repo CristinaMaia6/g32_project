@@ -19,14 +19,33 @@
             
             <button id="cancel" type="button" {{ butedit }} onclick="window.location.href = '/gform/{{ cname }}?option=cancel'" class="button1">Cancel</button>
             <button id="exit" type="button" {{ butshow }} onclick="window.location.href = '/gform/{{ cname }}?option=exit'" class="button1">Exit</button>
-        </div>
-      
-        <form id="form" action="/gform/{{ cname }}?option=save" method="post">
+            
+            {% if cname == "Market" %}
+                {% set m_id = obj['_market_id'] if obj is mapping else getattr(obj, '_market_id') %}
+                <button type="button" {{ butshow }} 
+                        onclick="window.location.href = '/gform/Transactions?market_filter={{ m_id }}'" 
+                        class="button1" style="color: #81c784; border: 1px solid #81c784 !important;">
+                    📈 Ver Vendas
+                </button>
+            {% endif %}
+
+            {% if cname == "Transactions" and session.get("market_filter") %}
+                <button type="button" 
+                        onclick="window.location.href = '/gform/Transactions?clear_filter=1'" 
+                        class="button1" style="color: #ff8a80; border: 1px solid #ff8a80 !important;">
+                    ❌ Limpar Filtro
+                </button>
+            {% endif %}
+            </div>
+        
+        <br>
+        
+        <form id="form" action="/gform/{{ cname }}?option=save" method="POST">
             {% for key in att %}
-                <div>
+                <div class="form-group">
                     <label for="{{ key }}">{{ des[loop.index0] }}:</label>
-                    
-                    {# Define o valor dinamicamente quer venha de um dicionário (modo inserção) quer de um objeto (modo leitura) #}
+       
+                    {# Define o valor dinamicamente quer venha de um dicionário quer de um objeto #}
                     {% set val = obj[key] if obj is mapping else getattr(obj, key) %}
                     
                     {% if loop.first %}
