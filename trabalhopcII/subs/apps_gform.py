@@ -14,11 +14,36 @@ def apps_gform(cname=''):
     ulogin = session.get("user")
     
     if ulogin is not None:
-        # Bloqueio de segurança: Se for a classe Userlogin, proíbe o gform genérico
+      
         if cname == 'Userlogin':
             return render_template("index.html", ulogin=session.get("user"))
             
         cl = eval(cname)
+        
+    
+        market_filter = request.args.get("market_filter")
+        if market_filter:
+            session["market_filter"] = int(market_filter)
+      
+            filtered_transactions = [
+                t_id for t_id, t in Transactions.obj.items() 
+                if t.id_market == int(market_filter)
+            ]
+            if filtered_transactions:
+                cl.lst = filtered_transactions
+                cl.pos = 0
+        elif request.args.get("clear_filter") or cname != "Transactions":
+    
+            if "market_filter" in session:
+                session.pop("market_filter", None)
+    
+            cl.lst = list(cl.obj.keys())
+        
+        if cname == "Transactions" and "market_filter" in session:
+            f_id = session["market_filter"]
+            cl.lst = [t_id for t_id, t in Transactions.obj.items() if f_id == t.id_market]
+      
+
         butshow = "enabled"
         butedit = "disabled"
         
@@ -35,20 +60,19 @@ def apps_gform(cname=''):
         if not is_admin and option in ['insert', 'edit', 'delete', 'save']:
             option = "cancel"
 
+        filename = "" # Variável auxiliar para evitar erros de caminho de ficheiro
+
         if prev_option == 'insert' and option == 'save':
             strobj = request.form[cl.att[0]]
             for i in range(1, len(cl.att)):
                 strobj += ";" + request.form[cl.att[i]]
-            obj = cl.from_string(strobj)
-            cl.insert(getattr(obj, cl.att[0]))
-            cl.last()
-            
+            obj = cl(strobj)
+            cl.write(filename + 'trabalhopc_project.db')
         elif prev_option == 'edit' and option == 'save':
             obj = cl.current()
             for i in range(1, len(cl.att)):
                 setattr(obj, cl.att[i], request.form[cl.att[i]])
-            cl.update(getattr(obj, cl.att[0]))
-            
+            cl.write(filename + 'trabalhopc_project.db')
         else:
             if option == "edit":
                 butshow = "disabled"
@@ -88,7 +112,7 @@ def apps_gform(cname=''):
             "gform.html", 
             butshow=butshow, 
             butedit=butedit, 
-            cname=cname, 
+            cname=cname, \
             obj=obj, 
             att=cl.att, 
             des=cl.des, 
@@ -96,4 +120,4 @@ def apps_gform(cname=''):
             is_admin=is_admin
         )
     else:
-        return render_template("index.html", ulogin=ulogin)
+        return render_template("index.html", ulogin=session.get("user"))
