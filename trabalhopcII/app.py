@@ -5,7 +5,7 @@ Created on Sun May 24 15:18:27 2026
 
 @author: franciscasilva
 """
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, jsonify
 from datafile import filename
 
 from classes.farmer import Farmer
@@ -32,7 +32,8 @@ Userlogin.read(filename + 'trabalhopc_project.db')
 
 @app.route("/")
 def index():
-    return render_template("index.html", ulogin=session.get("user"))
+    session.clear()
+    return render_template("index.html", ulogin=None)
 
 @app.route("/login")
 def login():
@@ -65,5 +66,39 @@ def subform(cname):
 def userlogin():
     return apps_userlogin()
 
+@app.route("/api/top-workers")
+def api_top_workers():
+    farmer_volumes = {}
+    for t_id, trans in Transactions.obj.items():
+        f_id = trans.id_farmer
+        farmer_volumes[f_id] = farmer_volumes.get(f_id, 0.0) + trans.amount
+    worker_data = []
+    for w_id, worker in Worker.obj.items():
+     
+        label = f"Worker {w_id}" 
+   
+        
+        volume = farmer_volumes.get(worker.farmer_id, 0.0)
+        worker_data.append({"name": label, "volume": volume})
+    worker_data.sort(key=lambda x: x["volume"], reverse=True)
+    top_5 = worker_data[:5]
+
+    return jsonify(top_5)
+
+
+@app.route("/api/market-categories")
+def api_market_categories():
+    category_counts = {}
+    for m_id, market in Market.obj.items():
+        cat = market.category if market.category else "Sem Categoria"
+        category_counts[cat] = category_counts.get(cat, 0) + 1
+
+    labels = list(category_counts.keys())
+    values = list(category_counts.values())
+
+    return jsonify({"labels": labels, "values": values})
+
+
 if __name__ == '__main__':
     app.run()
+
