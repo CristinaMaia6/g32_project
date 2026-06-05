@@ -98,7 +98,69 @@ def api_market_categories():
 
     return jsonify({"labels": labels, "values": values})
 
+@app.route("/api/market-type-sales")
+def api_market_type_sales():
+    sales_by_year_and_type = {}
 
+    market_type_by_market = {}
+
+    for mt_id, mt in MarketType.obj.items():
+        market_type_by_market[mt.id_market] = mt.market_type
+
+    for t_id, trans in Transactions.obj.items():
+        market_id = trans.id_market
+        amount = trans.amount
+        market_type = market_type_by_market.get(market_id, "Sem Tipo")
+
+        year = str(trans.transaction_date)[:4]
+
+        if year not in sales_by_year_and_type:
+            sales_by_year_and_type[year] = {}
+
+        if market_type not in sales_by_year_and_type[year]:
+            sales_by_year_and_type[year][market_type] = 0
+
+        sales_by_year_and_type[year][market_type] += amount
+
+    years = sorted(sales_by_year_and_type.keys())
+
+    market_types = set()
+
+    for year in years:
+        for market_type in sales_by_year_and_type[year]:
+            market_types.add(market_type)
+
+    market_types = sorted(market_types)
+
+    colors = [
+        "rgba(74, 186, 111, 1)",
+        "rgba(255, 99, 132, 1)",
+        "rgba(54, 162, 235, 1)",
+        "rgba(255, 206, 86, 1)",
+        "rgba(153, 102, 255, 1)",
+        "rgba(255, 159, 64, 1)"
+    ]
+
+    datasets = []
+
+    for index, market_type in enumerate(market_types):
+        values = []
+
+        for year in years:
+            value = sales_by_year_and_type[year].get(market_type, 0)
+            values.append(value)
+
+        datasets.append({
+            "label": market_type,
+            "data": values,
+            "borderColor": colors[index % len(colors)],
+            "backgroundColor": colors[index % len(colors)]
+        })
+
+    return jsonify({
+        "labels": years,
+        "datasets": datasets
+    })
 if __name__ == '__main__':
     app.run()
 

@@ -19,9 +19,16 @@
                 {% if ulogin == None %}
                     <li><a class="button login-btn-original" href="/login">Login</a></li>
                 {% else %}
+
                     <li><a class="button" href="/gform/Farmer">Farmers</a></li>
-                    <li><a class="button" href="/gform/MarketType">Market Types</a></li>
-                    
+
+                    <li class="dropdown">
+                        <a class="button dropbtn" href="/gform/MarketType">Market Types ▾</a>
+                        <div class="dropdown-content">
+                            <a href="#" id="open-market-type-sales-btn">📊 Sales Evolution</a>
+                        </div>
+                    </li>
+                        
                     <li class="dropdown">
                         <a class="button dropbtn" href="/gform/Market">Markets ▾</a>
                         <div class="dropdown-content">
@@ -53,9 +60,10 @@
     {% block content %}
     {% endblock %}
 
+    <!-- MODAL: TOP WORKERS -->
     <div id="chartModal" class="modal-chart">
         <div class="modal-chart-content">
-            <span class="close-modal">&times;</span>
+            <span class="close-modal" id="close-workers-modal">&times;</span>
             <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">
                 Top 5 Workers - Maior Volume Financeiro Assistido
             </h2>
@@ -65,6 +73,7 @@
         </div>
     </div>
 
+    <!-- MODAL: DISTRIBUIÇÃO DE MARKETS -->
     <div id="marketModal" class="modal-chart">
         <div class="modal-chart-content">
             <span class="close-modal" id="close-market-modal">&times;</span>
@@ -77,16 +86,34 @@
         </div>
     </div>
 
-    <script>
-        let myChart = null;
-        const modal = document.getElementById("chartModal");
-        const btn = document.getElementById("open-chart-btn");
-        const span = document.getElementsByClassName("close-modal")[0];
+    <!-- MODAL: MARKET TYPES AO LONGO DO TEMPO -->
+    <div id="marketTypeSalesModal" class="modal-chart">
+        <div class="modal-chart-content">
+            <span class="close-modal" id="close-market-type-sales-modal">&times;</span>
+            <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">
+                Volume Financeiro por Tipo de Mercado por Ano
+            </h2>
+            <div style="position: relative; width: 100%; height: 350px;">
+                <canvas id="marketTypeSalesChart"></canvas>
+            </div>
+        </div>
+    </div>
 
-        if (btn) {
-            btn.addEventListener("click", function(e) {
+    <script>
+        // =========================
+        // GRÁFICO 1: TOP WORKERS
+        // =========================
+
+        let workersChartInstance = null;
+
+        const workersModal = document.getElementById("chartModal");
+        const workersBtn = document.getElementById("open-chart-btn");
+        const workersCloseBtn = document.getElementById("close-workers-modal");
+
+        if (workersBtn) {
+            workersBtn.addEventListener("click", function(e) {
                 e.preventDefault();
-                modal.style.display = "flex";
+                workersModal.style.display = "flex";
 
                 fetch('/api/top-workers')
                     .then(response => response.json())
@@ -95,9 +122,12 @@
                         const volumes = data.map(item => item.volume);
 
                         const ctx = document.getElementById('workersChart').getContext('2d');
-                        if (myChart) { myChart.destroy(); }
 
-                        myChart = new Chart(ctx, {
+                        if (workersChartInstance) {
+                            workersChartInstance.destroy();
+                        }
+
+                        workersChartInstance = new Chart(ctx, {
                             type: 'bar',
                             data: {
                                 labels: labels,
@@ -114,17 +144,39 @@
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 plugins: {
-                                    legend: { labels: { color: '#ffffff' } }
+                                    legend: {
+                                        labels: {
+                                            color: '#ffffff'
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return context.dataset.label + ': ' + context.raw.toLocaleString('pt-PT') + ' €';
+                                            }
+                                        }
+                                    }
                                 },
                                 scales: {
                                     y: {
                                         beginAtZero: true,
-                                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                                        ticks: { color: '#cbdcbd' }
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.1)'
+                                        },
+                                        ticks: {
+                                            color: '#cbdcbd',
+                                            callback: function(value) {
+                                                return value.toLocaleString('pt-PT') + ' €';
+                                            }
+                                        }
                                     },
                                     x: {
-                                        grid: { display: false },
-                                        ticks: { color: '#cbdcbd' }
+                                        grid: {
+                                            display: false
+                                        },
+                                        ticks: {
+                                            color: '#cbdcbd'
+                                        }
                                     }
                                 }
                             }
@@ -133,14 +185,22 @@
             });
         }
 
-        if (span) {
-            span.onclick = function() { modal.style.display = "none"; }
+        if (workersCloseBtn) {
+            workersCloseBtn.onclick = function() {
+                workersModal.style.display = "none";
+            }
         }
 
+
+        // =========================
+        // GRÁFICO 2: DISTRIBUIÇÃO MARKETS
+        // =========================
+
         let marketChartInstance = null;
+
         const marketModal = document.getElementById("marketModal");
         const marketBtn = document.getElementById("open-market-chart-btn");
-        const marketSpan = document.getElementById("close-market-modal");
+        const marketCloseBtn = document.getElementById("close-market-modal");
 
         if (marketBtn) {
             marketBtn.addEventListener("click", function(e) {
@@ -151,7 +211,10 @@
                     .then(response => response.json())
                     .then(data => {
                         const ctx = document.getElementById('marketChart').getContext('2d');
-                        if (marketChartInstance) { marketChartInstance.destroy(); }
+
+                        if (marketChartInstance) {
+                            marketChartInstance.destroy();
+                        }
 
                         marketChartInstance = new Chart(ctx, {
                             type: 'doughnut',
@@ -164,7 +227,9 @@
                                         'rgba(46, 125, 50, 0.8)',
                                         'rgba(129, 199, 132, 0.8)',
                                         'rgba(200, 230, 201, 0.8)',
-                                        'rgba(27, 94, 32, 0.8)'
+                                        'rgba(27, 94, 32, 0.8)',
+                                        'rgba(102, 187, 106, 0.8)',
+                                        'rgba(165, 214, 167, 0.8)'
                                     ],
                                     borderColor: '#1a3c1a',
                                     borderWidth: 2
@@ -174,9 +239,11 @@
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 plugins: {
-                                    legend: { 
+                                    legend: {
                                         position: 'right',
-                                        labels: { color: '#ffffff' } 
+                                        labels: {
+                                            color: '#ffffff'
+                                        }
                                     }
                                 }
                             }
@@ -185,14 +252,140 @@
             });
         }
 
-        if (marketSpan) {
-            marketSpan.onclick = function() { marketModal.style.display = "none"; }
+        if (marketCloseBtn) {
+            marketCloseBtn.onclick = function() {
+                marketModal.style.display = "none";
+            }
         }
 
+
+        // =========================
+        // GRÁFICO 3: MARKET TYPES AO LONGO DO TEMPO
+        // =========================
+
+        let marketTypeSalesChartInstance = null;
+
+        const marketTypeSalesModal = document.getElementById("marketTypeSalesModal");
+        const marketTypeSalesBtn = document.getElementById("open-market-type-sales-btn");
+        const marketTypeSalesCloseBtn = document.getElementById("close-market-type-sales-modal");
+
+        if (marketTypeSalesBtn) {
+            marketTypeSalesBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                marketTypeSalesModal.style.display = "flex";
+
+                fetch('/api/market-type-sales')
+                    .then(response => response.json())
+                    .then(data => {
+                        const ctx = document.getElementById('marketTypeSalesChart').getContext('2d');
+
+                        if (marketTypeSalesChartInstance) {
+                            marketTypeSalesChartInstance.destroy();
+                        }
+
+                        marketTypeSalesChartInstance = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: data.labels,
+                                datasets: data.datasets.map(dataset => ({
+                                    label: dataset.label,
+                                    data: dataset.data,
+                                    borderColor: dataset.borderColor,
+                                    backgroundColor: dataset.backgroundColor,
+                                    fill: false,
+                                    tension: 0.25,
+                                    borderWidth: 2,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 6
+                                }))
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: {
+                                    mode: 'index',
+                                    intersect: false
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            color: '#ffffff',
+                                            boxWidth: 18,
+                                            padding: 20
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return context.dataset.label + ': ' + context.raw.toLocaleString('pt-PT') + ' €';
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.1)'
+                                        },
+                                        ticks: {
+                                            color: '#cbdcbd',
+                                            callback: function(value) {
+                                                return value.toLocaleString('pt-PT') + ' €';
+                                            }
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Volume Financeiro Total (€)',
+                                            color: '#ffffff'
+                                        }
+                                    },
+                                    x: {
+                                        grid: {
+                                            display: false
+                                        },
+                                        ticks: {
+                                            color: '#cbdcbd'
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Ano',
+                                            color: '#ffffff'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+            });
+        }
+
+        if (marketTypeSalesCloseBtn) {
+            marketTypeSalesCloseBtn.onclick = function() {
+                marketTypeSalesModal.style.display = "none";
+            }
+        }
+
+
+        // =========================
+        // FECHAR MODAIS AO CLICAR FORA
+        // =========================
+
         window.onclick = function(event) {
-            if (event.target == modal) { modal.style.display = "none"; }
-            if (event.target == marketModal) { marketModal.style.display = "none"; }
+            if (event.target == workersModal) {
+                workersModal.style.display = "none";
+            }
+
+            if (event.target == marketModal) {
+                marketModal.style.display = "none";
+            }
+
+            if (event.target == marketTypeSalesModal) {
+                marketTypeSalesModal.style.display = "none";
+            }
         }
     </script>
   </body>
+</html>
 </html>
