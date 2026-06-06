@@ -1,51 +1,334 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="dashboard-panel-wrapper">
-    <div class="dashboard-header-block">
+<style>
+    .executive-dashboard-wrapper {
+        width: 92%;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 130px 20px 60px 20px;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        color: #ffffff;
+    }
+
+    .executive-dashboard-header {
+        margin-bottom: 28px;
+    }
+
+    .executive-dashboard-header h1 {
+        font-size: 2.5rem;
+        font-weight: 300;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+        margin-bottom: 8px;
+    }
+
+    .executive-dashboard-header p {
+        color: #cbdcbd;
+        letter-spacing: 1px;
+        font-size: 0.95rem;
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .kpi-grid-secondary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .kpi-card,
+    .performer-card {
+        background: linear-gradient(135deg, rgba(26,60,26,0.98), rgba(74,92,74,0.88));
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 12px;
+        padding: 18px 20px;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+        min-height: 105px;
+    }
+
+    .kpi-card .label,
+    .performer-card .label {
+        color: #cbdcbd;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 8px;
+    }
+
+    .kpi-card .value,
+    .performer-card .value {
+        color: #ffffff;
+        font-size: 1.45rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        word-break: break-word;
+    }
+
+    .performer-card .subvalue {
+        color: #cbdcbd;
+        font-size: 0.9rem;
+        margin-top: 6px;
+    }
+
+    .dashboard-two-columns {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 22px;
+        margin-bottom: 22px;
+    }
+
+    .dashboard-card {
+        background-color: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 14px;
+        padding: 24px;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.22);
+    }
+
+    .dashboard-card h2 {
+        font-size: 1.05rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+    }
+
+    .dashboard-card .subtitle {
+        color: #cbdcbd;
+        font-size: 0.86rem;
+        margin-bottom: 18px;
+    }
+
+    .chart-area-large {
+        position: relative;
+        width: 100%;
+        height: 340px;
+    }
+
+    .comparison-table,
+    .recent-table {
+        width: 100%;
+        border-collapse: collapse;
+        color: #ffffff;
+        font-size: 0.88rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td,
+    .recent-table th,
+    .recent-table td {
+        padding: 12px 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .comparison-table th,
+    .recent-table th {
+        color: #cbdcbd;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .right {
+        text-align: right;
+    }
+
+    .left {
+        text-align: left;
+    }
+
+    @media (max-width: 1100px) {
+        .kpi-grid,
+        .kpi-grid-secondary,
+        .dashboard-two-columns {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 760px) {
+        .kpi-grid,
+        .kpi-grid-secondary,
+        .dashboard-two-columns {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="executive-dashboard-wrapper">
+    <div class="executive-dashboard-header">
         <h1>Painel Geral do Sistema</h1>
-        <p>Bem-vindo de volta, <span style="color: #4aba6f; font-weight: bold;">{{ ulogin }}</span>. Abaixo está o estado cruzado das operações.</p>
+        <p>Resumo executivo das principais classes e operações do sistema.</p>
     </div>
 
-    {% if alertas %}
-    <div class="alerts-container">
-        {% for alerta in alertas %}
-            <div class="alert-item-card">
-                {{ alerta }}
-            </div>
-        {% endfor %}
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="label">Total Sales</div>
+            <div class="value">{{ dashboard_stats.total_sales }}</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Transactions</div>
+            <div class="value">{{ dashboard_stats.total_transactions }}</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Average Transaction</div>
+            <div class="value">{{ dashboard_stats.average_transaction }}</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Farmers</div>
+            <div class="value">{{ dashboard_stats.total_farmers }}</div>
+        </div>
     </div>
-    {% endif %}
 
-    <div class="dashboard-grid-layout">
-        
-        <div class="dashboard-card-box">
-            <h2>📊 Eficiência por Categorias de Mercado</h2>
-            <p style="color: #cbdcbd; font-size: 0.9rem; margin-bottom: 15px;">Faturação total em tempo real extraída de Transactions + Markets</p>
-            <div class="chart-embed-container">
-                <img src="/static/market_category_chart.png" alt="Gráfico de Categorias" style="max-width:100%; height:auto; border-radius:6px; background: rgba(0,0,0,0.2);" onerror="this.src='https://placehold.co/600x300/1a3c1a/ffffff?text=A+carregar+estat%C3%ADsticas...'">
+    <div class="kpi-grid-secondary">
+        <div class="kpi-card">
+            <div class="label">Workers</div>
+            <div class="value">{{ dashboard_stats.total_workers }}</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Markets</div>
+            <div class="value">{{ dashboard_stats.total_markets }}</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Market Types</div>
+            <div class="value">{{ dashboard_stats.total_market_types }}</div>
+        </div>
+    </div>
+
+    <div class="dashboard-two-columns">
+        <div class="dashboard-card">
+            <h2>Sales Evolution</h2>
+            <p class="subtitle">Visão geral da evolução anual do volume financeiro.</p>
+            <div class="chart-area-large">
+                <canvas id="dashboardSalesEvolutionChart"></canvas>
             </div>
         </div>
 
-        <div class="dashboard-card-box">
-            <h2>⏳ Feed de Atividade Cruzada</h2>
-            <p style="color: #cbdcbd; font-size: 0.9rem; margin-bottom: 15px;">Últimas ações detetadas nas classes de dados</p>
-            
-            <div class="live-timeline">
-                {% if live_feed %}
-                    {% for item in live_feed %}
-                        <div class="timeline-row">
-                            <span class="timeline-time">{{ item.hora }}</span>
-                            <div class="timeline-badge {{ item.tipo }}"></div>
-                            <div class="timeline-text">{{ item.texto }}</div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p style="color: #cbdcbd;">Nenhuma atividade recente registada nas classes.</p>
-                {% endif %}
+        <div class="dashboard-card">
+            <h2>Top Performers</h2>
+            <p class="subtitle">Resumo dos principais destaques sem repetir os gráficos específicos de cada classe.</p>
+            <div class="performer-card" style="margin-bottom: 14px;">
+                <div class="label">Top Farmer</div>
+                <div class="value">{{ top_performers.top_farmer }}</div>
+                <div class="subvalue">{{ top_performers.top_farmer_sales }}</div>
+            </div>
+            <div class="performer-card" style="margin-bottom: 14px;">
+                <div class="label">Top Worker</div>
+                <div class="value">{{ top_performers.top_worker }}</div>
+                <div class="subvalue">{{ top_performers.top_worker_sales }}</div>
+            </div>
+            <div class="performer-card">
+                <div class="label">Top Market</div>
+                <div class="value">{{ top_performers.top_market }}</div>
+                <div class="subvalue">{{ top_performers.top_market_sales }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-two-columns">
+        <div class="dashboard-card">
+            <h2>Recent Transactions</h2>
+            <p class="subtitle">Últimas transactions registadas no sistema.</p>
+            <div style="overflow-x:auto;">
+                <table class="recent-table">
+                    <thead>
+                        <tr>
+                            <th class="left">ID</th>
+                            <th class="left">Date</th>
+                            <th class="left">Farmer</th>
+                            <th class="left">Market</th>
+                            <th class="right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in recent_transactions %}
+                        <tr>
+                            <td class="left">{{ item.id }}</td>
+                            <td class="left">{{ item.date }}</td>
+                            <td class="left">{{ item.farmer }}</td>
+                            <td class="left">{{ item.market }}</td>
+                            <td class="right">{{ item.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 
+        <div class="dashboard-card">
+            <h2>Market Type Summary</h2>
+            <p class="subtitle">Resumo secundário por market type.</p>
+            <div style="overflow-x:auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th class="left">Market Type</th>
+                            <th class="right">Total Sales</th>
+                            <th class="right">Transactions</th>
+                            <th class="right">Avg Transaction</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in market_type_table %}
+                        <tr>
+                            <td class="left">{{ item.market_type }}</td>
+                            <td class="right">{{ item.total_sales }}</td>
+                            <td class="right">{{ item.transactions }}</td>
+                            <td class="right">{{ item.average_transaction }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    function createMoneyTicks(value) {
+        return Number(value || 0).toLocaleString('pt-PT') + ' €';
+    }
+
+    fetch('/api/sales-evolution')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('dashboardSalesEvolutionChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Total Sales (€)',
+                        data: data.values,
+                        borderColor: 'rgba(74, 186, 111, 1)',
+                        backgroundColor: 'rgba(74, 186, 111, 0.18)',
+                        fill: true,
+                        tension: 0.25,
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#ffffff' } },
+                        tooltip: { callbacks: { label: function(context) { return createMoneyTicks(context.raw); } } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#cbdcbd', callback: function(value) { return createMoneyTicks(value); } } },
+                        x: { grid: { display: false }, ticks: { color: '#cbdcbd' } }
+                    }
+                }
+            });
+        });
+</script>
 {% endblock %}

@@ -5,47 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gestão de Dados</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     {% block title %}
     {% endblock %}
   </head>
 
   <body class="page-body" style="height: auto !important; min-height: 100vh; overflow-y: auto !important;">
-        
       <nav>
             <ul class="menu">
                 {% if ulogin == None %}
                     <li><a class="button login-btn-original" href="/login">Login</a></li>
                 {% else %}
                     <li><a class="button {% if request.path == '/dashboard' %}active-tab{% endif %}" href="/dashboard">Dashboard</a></li>
-            
-                    <li><a class="button" href="/gform/Farmer">Farmers</a></li>
-                    <li><a class="button" href="/gform/MarketType">Market Types</a></li>
-            
                     <li class="dropdown">
-                        <a class="button dropbtn" href="/gform/Market">Markets ▾</a>
+                        <a class="button dropbtn" href="/gform/Farmer">Farmers ▾</a>
                         <div class="dropdown-content">
-                            <a href="#" id="open-market-chart-btn">📊 Distribuição</a>
+                            <a href="#" id="open-farmers-chart-btn">Top 5 Farmers</a>
                         </div>
                     </li>
-
-                    <li><a class="button" href="/gform/Transactions">Transactions</a></li>
-            
                     <li class="dropdown">
                         <a class="button dropbtn" href="/gform/Worker">Workers ▾</a>
                         <div class="dropdown-content">
-                            <a href="#" id="open-chart-btn">📊 Estatísticas</a>
+                            <a href="#" id="open-chart-btn">Top 5 Workers</a>
                         </div>
                     </li>
-
+                    <li class="dropdown">
+                        <a class="button dropbtn" href="/gform/Market">Markets ▾</a>
+                        <div class="dropdown-content">
+                            <a href="#" id="open-market-chart-btn">Distribuição</a>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a class="button dropbtn" href="/gform/MarketType">Market Types ▾</a>
+                        <div class="dropdown-content">
+                            <a href="#" id="open-market-type-sales-btn">Sales Evolution</a>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a class="button dropbtn" href="/gform/Transactions">Transactions ▾</a>
+                        <div class="dropdown-content">
+                            <a href="#" id="open-transactions-evolution-btn">Sales Evolution</a>
+                        </div>
+                    </li>
                     <li><a class="button" href="/Userlogin">Users</a></li>
-
                     <li class="dropdown">
                         <a class="button dropbtn" style="color: lightblue;">User: {{ulogin}} ▾</a>
                         <div class="dropdown-content">
-                            <a href="/logoff" style="color: #ff8a80;">🚪 Logoff</a>
+                            <a href="/logoff" style="color: #ff8a80;">Logoff</a>
                         </div>
                     </li>
                 {% endif %}
@@ -55,26 +61,30 @@
     {% block content %}
     {% endblock %}
 
-    <!-- MODAL: TOP WORKERS -->
+    <div id="farmersModal" class="modal-chart">
+        <div class="modal-chart-content">
+            <span class="close-modal" id="close-farmers-modal">&times;</span>
+            <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">Top 5 Farmers by Sales</h2>
+            <div style="position: relative; width: 100%; height: 350px;">
+                <canvas id="farmersChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <div id="chartModal" class="modal-chart">
         <div class="modal-chart-content">
             <span class="close-modal" id="close-workers-modal">&times;</span>
-            <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">
-                Top 5 Workers - Maior Volume Financeiro Assistido
-            </h2>
+            <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">Top 5 Workers by Assisted Sales</h2>
             <div style="position: relative; width: 100%; height: 350px;">
                 <canvas id="workersChart"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: DISTRIBUIÇÃO DE MARKETS -->
     <div id="marketModal" class="modal-chart">
         <div class="modal-chart-content" style="width: 80%; max-width: 850px;">
             <span class="close-modal" id="close-market-modal">&times;</span>
-            <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">
-                Faturação por Categoria
-            </h2>
+            <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">Faturação por Categoria</h2>
             <div style="position: relative; width: 100%; text-align: center;">
                 <img id="marketChartImage" src="" alt="Gráfico de Categorias" style="max-width: 100%; height: auto; display: none; border-radius: 6px;">
                 <div id="loading-text" style="color: #cbdcbd; font-family: Arial, sans-serif;">A gerar gráfico no Matplotlib...</div>
@@ -82,101 +92,167 @@
         </div>
     </div>
 
-    <!-- MODAL: MARKET TYPES AO LONGO DO TEMPO -->
     <div id="marketTypeSalesModal" class="modal-chart">
         <div class="modal-chart-content">
             <span class="close-modal" id="close-market-type-sales-modal">&times;</span>
-            <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">
-                Volume Financeiro por Tipo de Mercado por Ano
-            </h2>
+            <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">Volume Financeiro por Tipo de Mercado por Ano</h2>
             <div style="position: relative; width: 100%; height: 350px;">
                 <canvas id="marketTypeSalesChart"></canvas>
             </div>
         </div>
     </div>
 
+    <div id="transactionsEvolutionModal" class="modal-chart">
+        <div class="modal-chart-content">
+            <span class="close-modal" id="close-transactions-evolution-modal">&times;</span>
+            <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">Sales Evolution Over Time</h2>
+            <div style="position: relative; width: 100%; height: 350px;">
+                <canvas id="transactionsEvolutionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div id="performanceModal" class="modal-chart">
+        <div class="modal-chart-content" style="width: 78%; max-width: 760px;">
+            <span class="close-modal" id="close-performance-modal">&times;</span>
+            <h2 id="performanceTitle" style="font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff; font-size: 1.3rem;">Performance</h2>
+            <div id="performanceBody" style="color: #ffffff; font-family: 'Helvetica Neue', Arial, sans-serif;"></div>
+        </div>
+    </div>
+
     <script>
-        // =========================
-        // GRÁFICO 1: TOP WORKERS
-        // =========================
-
+        let farmersChartInstance = null;
         let workersChartInstance = null;
+        let marketTypeSalesChartInstance = null;
+        let transactionsEvolutionChartInstance = null;
 
+        const farmersModal = document.getElementById("farmersModal");
+        const farmersBtn = document.getElementById("open-farmers-chart-btn");
+        const farmersCloseBtn = document.getElementById("close-farmers-modal");
         const workersModal = document.getElementById("chartModal");
         const workersBtn = document.getElementById("open-chart-btn");
         const workersCloseBtn = document.getElementById("close-workers-modal");
+        const marketModal = document.getElementById("marketModal");
+        const marketBtn = document.getElementById("open-market-chart-btn");
+        const marketCloseBtn = document.getElementById("close-market-modal");
+        const marketChartImage = document.getElementById("marketChartImage");
+        const loadingText = document.getElementById("loading-text");
+        const marketTypeSalesModal = document.getElementById("marketTypeSalesModal");
+        const marketTypeSalesBtn = document.getElementById("open-market-type-sales-btn");
+        const marketTypeSalesCloseBtn = document.getElementById("close-market-type-sales-modal");
+        const transactionsEvolutionModal = document.getElementById("transactionsEvolutionModal");
+        const transactionsEvolutionBtn = document.getElementById("open-transactions-evolution-btn");
+        const transactionsEvolutionCloseBtn = document.getElementById("close-transactions-evolution-modal");
+        const performanceModal = document.getElementById("performanceModal");
+        const performanceCloseBtn = document.getElementById("close-performance-modal");
+        const performanceTitle = document.getElementById("performanceTitle");
+        const performanceBody = document.getElementById("performanceBody");
+
+        function createMoneyTicks(value) {
+            return Number(value || 0).toLocaleString('pt-PT') + ' €';
+        }
+
+        function buildPerformanceTable(metrics) {
+            let html = '<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">';
+            metrics.forEach(function(item) {
+                html += '<div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 14px 16px;">';
+                html += '<div style="color: #cbdcbd; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 7px;">' + item.label + '</div>';
+                html += '<div style="color: #ffffff; font-size: 1.08rem; font-weight: 700; word-break: break-word;">' + item.value + '</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function openPerformanceModal(cname) {
+            const firstInput = document.querySelector('#form input');
+            if (!firstInput || !firstInput.value) {
+                return;
+            }
+
+            const objectId = firstInput.value;
+            performanceTitle.innerText = cname + ' Performance';
+            performanceBody.innerHTML = '<p style="color: #cbdcbd;">A carregar dados...</p>';
+            performanceModal.style.display = 'flex';
+
+            fetch('/api/performance/' + cname + '/' + objectId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        performanceBody.innerHTML = '<p style="color: #ff8a80;">' + data.error + '</p>';
+                        return;
+                    }
+                    performanceTitle.innerText = data.title;
+                    performanceBody.innerHTML = buildPerformanceTable(data.metrics);
+                })
+                .catch(error => {
+                    performanceBody.innerHTML = '<p style="color: #ff8a80;">Erro ao carregar a performance.</p>';
+                    console.error(error);
+                });
+        }
+
+        function renderHorizontalMoneyBarChart(canvasId, existingChart, labels, values, chartLabel) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            if (existingChart) {
+                existingChart.destroy();
+            }
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: chartLabel,
+                        data: values,
+                        backgroundColor: 'rgba(74, 186, 111, 0.7)',
+                        borderColor: 'rgba(255, 255, 255, 1)',
+                        borderWidth: 1.5,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#ffffff' } },
+                        tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + createMoneyTicks(context.raw); } } }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#cbdcbd', callback: function(value) { return createMoneyTicks(value); } } },
+                        y: { grid: { display: false }, ticks: { color: '#cbdcbd' } }
+                    }
+                }
+            });
+        }
+
+        if (farmersBtn) {
+            farmersBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                farmersModal.style.display = "flex";
+                fetch('/api/top-farmers-sales')
+                    .then(response => response.json())
+                    .then(data => {
+                        farmersChartInstance = renderHorizontalMoneyBarChart('farmersChart', farmersChartInstance, data.labels, data.values, 'Total Sales (€)');
+                    });
+            });
+        }
+
+        if (farmersCloseBtn) {
+            farmersCloseBtn.onclick = function() {
+                farmersModal.style.display = "none";
+            }
+        }
 
         if (workersBtn) {
             workersBtn.addEventListener("click", function(e) {
                 e.preventDefault();
                 workersModal.style.display = "flex";
-
                 fetch('/api/top-workers')
                     .then(response => response.json())
                     .then(data => {
                         const labels = data.map(item => item.name);
-                        const volumes = data.map(item => item.volume);
-
-                        const ctx = document.getElementById('workersChart').getContext('2d');
-
-                        if (workersChartInstance) {
-                            workersChartInstance.destroy();
-                        }
-
-                        workersChartInstance = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Volume Financeiro Total (€)',
-                                    data: volumes,
-                                    backgroundColor: 'rgba(74, 186, 111, 0.7)',
-                                    borderColor: 'rgba(255, 255, 255, 1)',
-                                    borderWidth: 1.5,
-                                    borderRadius: 4
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        labels: {
-                                            color: '#ffffff'
-                                        }
-                                    },
-                                    tooltip: {
-                                        callbacks: {
-                                            label: function(context) {
-                                                return context.dataset.label + ': ' + context.raw.toLocaleString('pt-PT') + ' €';
-                                            }
-                                        }
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            color: 'rgba(255, 255, 255, 0.1)'
-                                        },
-                                        ticks: {
-                                            color: '#cbdcbd',
-                                            callback: function(value) {
-                                                return value.toLocaleString('pt-PT') + ' €';
-                                            }
-                                        }
-                                    },
-                                    x: {
-                                        grid: {
-                                            display: false
-                                        },
-                                        ticks: {
-                                            color: '#cbdcbd'
-                                        }
-                                    }
-                                }
-                            }
-                        });
+                        const values = data.map(item => item.volume);
+                        workersChartInstance = renderHorizontalMoneyBarChart('workersChart', workersChartInstance, labels, values, 'Assisted Sales (€)');
                     });
             });
         }
@@ -187,63 +263,26 @@
             }
         }
 
-
-        // =========================
-        // GRÁFICO 2: DISTRIBUIÇÃO MARKETS
-        // =========================
-
-        let marketChartInstance = null;
-
-        const marketModal = document.getElementById("marketModal");
-        const marketBtn = document.getElementById("open-market-chart-btn");
-        const marketCloseBtn = document.getElementById("close-market-modal");
-
         if (marketBtn) {
             marketBtn.addEventListener("click", function(e) {
                 e.preventDefault();
                 marketModal.style.display = "flex";
+                marketChartImage.style.display = "none";
+                loadingText.style.display = "block";
+                loadingText.innerText = "A gerar gráfico no Matplotlib...";
 
                 fetch('/api/market-categories')
                     .then(response => response.json())
                     .then(data => {
-                        const ctx = document.getElementById('marketChart').getContext('2d');
-
-                        if (marketChartInstance) {
-                            marketChartInstance.destroy();
-                        }
-
-                        marketChartInstance = new Chart(ctx, {
-                            type: 'doughnut',
-                            data: {
-                                labels: data.labels,
-                                datasets: [{
-                                    data: data.values,
-                                    backgroundColor: [
-                                        'rgba(74, 186, 111, 0.8)',
-                                        'rgba(46, 125, 50, 0.8)',
-                                        'rgba(129, 199, 132, 0.8)',
-                                        'rgba(200, 230, 201, 0.8)',
-                                        'rgba(27, 94, 32, 0.8)',
-                                        'rgba(102, 187, 106, 0.8)',
-                                        'rgba(165, 214, 167, 0.8)'
-                                    ],
-                                    borderColor: '#1a3c1a',
-                                    borderWidth: 2
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        position: 'right',
-                                        labels: {
-                                            color: '#ffffff'
-                                        }
-                                    }
-                                }
-                            }
-                        });
+                        marketChartImage.src = data.image_url;
+                        marketChartImage.onload = function() {
+                            loadingText.style.display = "none";
+                            marketChartImage.style.display = "block";
+                        };
+                    })
+                    .catch(error => {
+                        loadingText.innerText = "Erro ao carregar o gráfico.";
+                        console.error(error);
                     });
             });
         }
@@ -253,17 +292,6 @@
                 marketModal.style.display = "none";
             }
         }
-
-
-        // =========================
-        // GRÁFICO 3: MARKET TYPES AO LONGO DO TEMPO
-        // =========================
-
-        let marketTypeSalesChartInstance = null;
-
-        const marketTypeSalesModal = document.getElementById("marketTypeSalesModal");
-        const marketTypeSalesBtn = document.getElementById("open-market-type-sales-btn");
-        const marketTypeSalesCloseBtn = document.getElementById("close-market-type-sales-modal");
 
         if (marketTypeSalesBtn) {
             marketTypeSalesBtn.addEventListener("click", function(e) {
@@ -298,58 +326,14 @@
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                interaction: {
-                                    mode: 'index',
-                                    intersect: false
-                                },
+                                interaction: { mode: 'index', intersect: false },
                                 plugins: {
-                                    legend: {
-                                        position: 'bottom',
-                                        labels: {
-                                            color: '#ffffff',
-                                            boxWidth: 18,
-                                            padding: 20
-                                        }
-                                    },
-                                    tooltip: {
-                                        callbacks: {
-                                            label: function(context) {
-                                                return context.dataset.label + ': ' + context.raw.toLocaleString('pt-PT') + ' €';
-                                            }
-                                        }
-                                    }
+                                    legend: { position: 'bottom', labels: { color: '#ffffff', boxWidth: 18, padding: 20 } },
+                                    tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + createMoneyTicks(context.raw); } } }
                                 },
                                 scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            color: 'rgba(255, 255, 255, 0.1)'
-                                        },
-                                        ticks: {
-                                            color: '#cbdcbd',
-                                            callback: function(value) {
-                                                return value.toLocaleString('pt-PT') + ' €';
-                                            }
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Volume Financeiro Total (€)',
-                                            color: '#ffffff'
-                                        }
-                                    },
-                                    x: {
-                                        grid: {
-                                            display: false
-                                        },
-                                        ticks: {
-                                            color: '#cbdcbd'
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Ano',
-                                            color: '#ffffff'
-                                        }
-                                    }
+                                    y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#cbdcbd', callback: function(value) { return createMoneyTicks(value); } }, title: { display: true, text: 'Volume Financeiro Total (€)', color: '#ffffff' } },
+                                    x: { grid: { display: false }, ticks: { color: '#cbdcbd' }, title: { display: true, text: 'Ano', color: '#ffffff' } }
                                 }
                             }
                         });
@@ -363,26 +347,85 @@
             }
         }
 
+        if (transactionsEvolutionBtn) {
+            transactionsEvolutionBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                transactionsEvolutionModal.style.display = "flex";
 
-        // =========================
-        // FECHAR MODAIS AO CLICAR FORA
-        // =========================
+                fetch('/api/sales-evolution')
+                    .then(response => response.json())
+                    .then(data => {
+                        const ctx = document.getElementById('transactionsEvolutionChart').getContext('2d');
+
+                        if (transactionsEvolutionChartInstance) {
+                            transactionsEvolutionChartInstance.destroy();
+                        }
+
+                        transactionsEvolutionChartInstance = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: data.labels,
+                                datasets: [{
+                                    label: 'Total Sales (€)',
+                                    data: data.values,
+                                    borderColor: 'rgba(74, 186, 111, 1)',
+                                    backgroundColor: 'rgba(74, 186, 111, 0.18)',
+                                    fill: true,
+                                    tension: 0.25,
+                                    borderWidth: 2,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 6
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { labels: { color: '#ffffff' } },
+                                    tooltip: { callbacks: { label: function(context) { return createMoneyTicks(context.raw); } } }
+                                },
+                                scales: {
+                                    y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#cbdcbd', callback: function(value) { return createMoneyTicks(value); } } },
+                                    x: { grid: { display: false }, ticks: { color: '#cbdcbd' } }
+                                }
+                            }
+                        });
+                    });
+            });
+        }
+
+        if (transactionsEvolutionCloseBtn) {
+            transactionsEvolutionCloseBtn.onclick = function() {
+                transactionsEvolutionModal.style.display = "none";
+            }
+        }
+
+        if (performanceCloseBtn) {
+            performanceCloseBtn.onclick = function() {
+                performanceModal.style.display = "none";
+            }
+        }
 
         window.onclick = function(event) {
+            if (event.target == farmersModal) {
+                farmersModal.style.display = "none";
+            }
             if (event.target == workersModal) {
                 workersModal.style.display = "none";
             }
-
             if (event.target == marketModal) {
                 marketModal.style.display = "none";
             }
-
             if (event.target == marketTypeSalesModal) {
                 marketTypeSalesModal.style.display = "none";
+            }
+            if (event.target == transactionsEvolutionModal) {
+                transactionsEvolutionModal.style.display = "none";
+            }
+            if (event.target == performanceModal) {
+                performanceModal.style.display = "none";
             }
         }
     </script>
   </body>
 </html>
-</html>
-    
