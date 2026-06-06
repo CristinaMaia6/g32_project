@@ -8,8 +8,8 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: auto; 
+    scroll-behavior: smooth; 
 }
-
 
 .hero-index {
 
@@ -492,4 +492,118 @@ body:not(.hero-index),
 
 .close-modal:hover {
     color: #ffffff;
+}
+
+body:not(.login) nav .menu .button.active-tab {
+    background-color: #2e7d32 !important;
+    border-bottom: 2px solid #4aba6f;
+    font-weight: bold;
+}
+
+.dashboard-panel-wrapper {
+    min-height: 100vh;
+    padding: 120px 40px 60px 40px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #ffffff;
+}
+
+.dashboard-header-block {
+    margin-bottom: 30px;
+}
+
+.dashboard-header-block h1 {
+    font-size: 2.2rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+}
+
+.alerts-container {
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.alert-item-card {
+    background-color: rgba(198, 40, 40, 0.25);
+    border-left: 5px solid #c62828;
+    padding: 15px 20px;
+    border-radius: 4px;
+    color: #ff8a80;
+    font-weight: 500;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.dashboard-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dashboard-card-box {
+    background-color: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.dashboard-card-box h2 {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.chart-embed-container {
+    text-align: center;
+    padding: 10px;
+}
+
+.live-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.timeline-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid #cbdcbd;
+}
+
+.timeline-time {
+    font-size: 0.75rem;
+    color: #cbdcbd;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding-top: 2px;
+}
+
+.timeline-text {
+    font-size: 0.9rem;
+    color: #ffffff;
+    line-height: 1.4;
+}
+
+.timeline-row:has(.transaction) { border-left-color: #4aba6f; }
+.timeline-row:has(.worker) { border-left-color: #4ba3ba; }
+
+
+.dashboard-panel-wrapper {
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
 }
