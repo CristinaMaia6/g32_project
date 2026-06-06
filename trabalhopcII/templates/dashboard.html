@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-panel-wrapper">
+    <div class="dashboard-header-block">
+        <h1>Painel Geral do Sistema</h1>
+        <p>Bem-vindo de volta, <span style="color: #4aba6f; font-weight: bold;">{{ ulogin }}</span>. Abaixo está o estado cruzado das operações.</p>
+    </div>
+
+    {% if alertas %}
+    <div class="alerts-container">
+        {% for alerta in alertas %}
+            <div class="alert-item-card">
+                {{ alerta }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="dashboard-grid-layout">
+        
+        <div class="dashboard-card-box">
+            <h2>📊 Eficiência por Categorias de Mercado</h2>
+            <p style="color: #cbdcbd; font-size: 0.9rem; margin-bottom: 15px;">Faturação total em tempo real extraída de Transactions + Markets</p>
+            <div class="chart-embed-container">
+                <img src="/static/market_category_chart.png" alt="Gráfico de Categorias" style="max-width:100%; height:auto; border-radius:6px; background: rgba(0,0,0,0.2);" onerror="this.src='https://placehold.co/600x300/1a3c1a/ffffff?text=A+carregar+estat%C3%ADsticas...'">
+            </div>
+        </div>
+
+        <div class="dashboard-card-box">
+            <h2>⏳ Feed de Atividade Cruzada</h2>
+            <p style="color: #cbdcbd; font-size: 0.9rem; margin-bottom: 15px;">Últimas ações detetadas nas classes de dados</p>
+            
+            <div class="live-timeline">
+                {% if live_feed %}
+                    {% for item in live_feed %}
+                        <div class="timeline-row">
+                            <span class="timeline-time">{{ item.hora }}</span>
+                            <div class="timeline-badge {{ item.tipo }}"></div>
+                            <div class="timeline-text">{{ item.texto }}</div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #cbdcbd;">Nenhuma atividade recente registada nas classes.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
