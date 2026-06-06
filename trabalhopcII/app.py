@@ -316,15 +316,12 @@ def api_top_workers():
 
 @app.route("/api/market-categories")
 def api_market_categories():
-    category_counts = {}
-    for m_id, market in Market.obj.items():
-        cat = market.category if market.category else "Sem Categoria"
-        category_counts[cat] = category_counts.get(cat, 0) + 1
-
-    labels = list(category_counts.keys())
-    values = list(category_counts.values())
-
-    return jsonify({"labels": labels, "values": values})
+    gerar_grafico_faturacao_categoria()
+    
+    return jsonify({
+        'image_url': f'/static/market_category_chart.png?v={int(time.time())}'
+    })
+    
 
 @app.route("/api/market-type-sales")
 def api_market_type_sales():
