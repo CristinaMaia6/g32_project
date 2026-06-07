@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, session
 from classes.userlogin import Userlogin
 
 prev_option = ""
-
+ 
 def apps_userlogin():
     global prev_option
     ulogin = session.get("user")
