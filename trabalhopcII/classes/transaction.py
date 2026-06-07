@@ -4,7 +4,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Apr 10 10:49:36 2026
-
+ 
 @author: franciscasilva
 """
 
